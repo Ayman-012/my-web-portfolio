@@ -811,14 +811,34 @@
 
     <!-- CONTACT -->
     <section id="contact">
-      <div class="section-label" style="justify-content:center">04 — Contact</div>
-      <h2>Let's work together.</h2>
-      <p>Open to freelance projects, AI evaluation roles, and collaborations.</p>
-      <div class="contact-links">
-        <a href="https://upwork.com" target="_blank" class="contact-link">↗ Upwork</a>
-        <a href="https://fiverr.com" target="_blank" class="contact-link">↗ Fiverr</a>
-        <a href="https://linkedin.com" target="_blank" class="contact-link">↗ LinkedIn</a>
-        <a href="mailto:your@email.com" class="contact-link">↗ Email</a>
+      <div class="section-label">04 — Contact</div>
+      <div class="contact-container">
+        <div class="contact-info reveal">
+          <h2>Let's work together.</h2>
+          <p>Open to freelance projects, AI evaluation roles, and collaborations.</p>
+          <div class="contact-links">
+            <a href="https://upwork.com" target="_blank" class="contact-link">↗ Upwork</a>
+            <a href="https://fiverr.com" target="_blank" class="contact-link">↗ Fiverr</a>
+            <a href="https://linkedin.com" target="_blank" class="contact-link">↗ LinkedIn</a>
+            <a href="mailto:aymanghyu5646@gmail.com" class="contact-link">↗ Email</a>
+          </div>
+        </div>
+        <form class="contact-form reveal" id="contactForm">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" class="form-input" required placeholder="Your Name" />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" class="form-input" required placeholder="your.email@example.com" />
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" class="form-textarea" required placeholder="Tell me about your project..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Send Message</button>
+          <div id="formStatus" class="form-status"></div>
+        </form>
       </div>
     </section>
 
@@ -849,7 +869,58 @@
       setTimeout(() => {
         el.style.opacity = '1';
         el.style.transform = 'none';
+      }, 200 + i * 120);
     });
+
+    // Contact Form Submission
+    const contactForm = document.getElementById('contactForm');
+    const formStatus = document.getElementById('formStatus');
+
+    if (contactForm) {
+      contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.textContent;
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+        formStatus.className = 'form-status';
+        formStatus.textContent = '';
+        
+        const formData = {
+          name: document.getElementById('name').value,
+          email: document.getElementById('email').value,
+          message: document.getElementById('message').value
+        };
+        
+        try {
+          const response = await fetch('/api/send', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+          
+          const result = await response.json();
+          
+          if (response.ok && result.success) {
+            formStatus.className = 'form-status success';
+            formStatus.textContent = 'Message sent successfully! I will get back to you soon.';
+            contactForm.reset();
+          } else {
+            throw new Error(result.error || 'Something went wrong. Please try again.');
+          }
+        } catch (error) {
+          formStatus.className = 'form-status error';
+          formStatus.textContent = error.message;
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+        }
+      });
+    }
   </script>
  
   <!--Start of Tawk.to Script-->

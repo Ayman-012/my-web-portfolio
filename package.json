@@ -1,0 +1,9 @@
+{
+  "name": "my-web-portfolio",
+  "version": "1.0.0",
+  "description": "My Web Portfolio",
+  "main": "index.html",
+  "dependencies": {
+    "resend": "^3.2.0"
+  }
+}
